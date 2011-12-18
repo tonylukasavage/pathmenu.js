@@ -1,18 +1,8 @@
-Welcome to your Appcelerator Titanium Mobile Project
+# pathmenu.js
 
-This is a blank project.  Start by editing your application's app.js to 
-make your first mobile project using Titanium.
+Add the super-hyped Path menu interface to your Appcelerator Titanium apps. 
 
+### Highlights
 
-
-----------------------------------
-Stuff our legal folk make us say:
-
-Appcelerator, Appcelerator Titanium and associated marks and logos are 
-trademarks of Appcelerator, Inc. 
-
-Titanium is Copyright (c) 2009-2010 by Appcelerator, Inc. All Rights Reserved.
-
-Titanium is licensed under the Apache Public License (Version 2). Please
-see the LICENSE file for the full license.
-
+* Supported on iOS and Android
+* Tested against Titanium Mobile 1.8.0.1 and 1.8 RC
