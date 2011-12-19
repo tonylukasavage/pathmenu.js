@@ -15,8 +15,8 @@ A minor hack to the core Titanium Mobile SDK is required to get icon rotations w
 
 ### Patching TiViewProxy.m
 
-**TITANIUM_SDK**: Your Titanium SDK directory. Just in case, here's the [Titanium SDK locations on all supported operating systems](https://wiki.appcelerator.org/display/guides/Installing+Titanium+SDK+Continuous+Builds#InstallingTitaniumSDKContinuousBuilds-ManualInstall).
-**TITANIUM_SDK_VERSION**: The Titanium SDK version you are targeting
+> **TITANIUM_SDK**: Your Titanium SDK directory. Just in case, here's the [Titanium SDK locations on all supported operating systems](https://wiki.appcelerator.org/display/guides/Installing+Titanium+SDK+Continuous+Builds#InstallingTitaniumSDKContinuousBuilds-ManualInstall).
+> **TITANIUM_SDK_VERSION**: The Titanium SDK version you are targeting
 
 1. Open TiViewProxy.m, found at `TITANIUM_SDK/mobilesdk/osx/TITANIUM_SDK_VERSION/iphone/Classes/TiViewProxy.m`
 2. Add the content of [TiViewProxy.m.patch](https://github.com/tonylukasavage/pathmenu.js/blob/master/patch/TiViewProxy.m.patch) anywhere before the final `@end` in `TiViewProxy.m`.
