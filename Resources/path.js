@@ -80,8 +80,8 @@ exports.createMenu = function(o) {
 			);
 			icon.animate(icon.animations[anim + 'Bounce']);
 			
-			if (!isAndroid) {
-				// icon.tonytest();
+			if (!isAndroid && icon.rotateAnimation) {
+				icon.rotateAnimation();
 			}
 		}
 	});

@@ -1,0 +1,14 @@
+-(void)rotateAnimation:(id)arg {
+    float rotations = 2;
+    float duration = 0.450;
+    
+    CABasicAnimation* rotationAnimation;
+    rotationAnimation = [CABasicAnimation animationWithKeyPath:@"transform.rotation.z"];
+    rotationAnimation.toValue = [NSNumber numberWithFloat: M_PI * 2.0 * rotations ];
+    rotationAnimation.duration = duration;
+    rotationAnimation.cumulative = YES;
+    rotationAnimation.repeatCount = 1.0; 
+    rotationAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut];
+    
+    [[self view].layer addAnimation:rotationAnimation forKey:@"rotationAnimation"];
+}
