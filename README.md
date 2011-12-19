@@ -2,8 +2,6 @@
 
 Add the super-hyped Path menu interface to your Appcelerator Titanium apps. Check out [path.com](http://path.com) for the inspiration.
 
-![](http://www.mathworks.com/matlabcentral/fx_files/21944/2/DancingPeaks.gif)
-
 ### Highlights
 
 * [12 second demo video](http://www.youtube.com/watch?v=VJrXuNkvkZc)
