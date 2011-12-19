@@ -7,6 +7,7 @@ Add the super-hyped Path menu interface to your Appcelerator Titanium apps. Chec
 * [12 second demo video](http://www.youtube.com/watch?v=VJrXuNkvkZc)
 * Supported on iOS and Android
 * Tested against Titanium Mobile 1.8.0.1 CI and 1.8 RC
+* Written almost entirely in Javascript, but leverages the underlying native platforms for _great_ performance
 
 ## IMPORTANT 
 
