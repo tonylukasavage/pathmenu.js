@@ -10,8 +10,8 @@ Add the super-hyped Path menu interface to your Appcelerator Titanium apps. Chec
 
 ### Additional Notes
 
-* A minor hack to the core Titanium Mobile SDK is necessary to get icon rotations working correctly with iOS. I will be including that patch in the very near future. The reason I'm not submitting it as a pull request to [titanium_mobile](https://github.com/appcelerator/titanium_mobile) is because it is very function-specific and would create a parity issue between ios and android.
+* A minor hack to the core Titanium Mobile SDK is necessary to get icon rotations working correctly with iOS. I will be including that patch in the very near future. The reason I'm not submitting it as a pull request to [titanium_mobile](https://github.com/appcelerator/titanium_mobile) is because it is very function-specific and would create a parity issue between ios and android. 
 
-# Issues
+### Issues
 
 [https://github.com/tonylukasavage/pathmenu.js/issues](https://github.com/tonylukasavage/pathmenu.js/issues)
