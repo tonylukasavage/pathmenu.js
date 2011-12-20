@@ -22,9 +22,11 @@ var DEFAULTS = {
 };
 var isAndroid = Ti.Platform.osname === 'android';
 
+exports.EVENT_ICONCLICK = 'iconClick';
+
 exports.createMenu = function(o) {
 	// Configure the settings for the menu
-	o.iconImages = o.iconImages || createDefaultIconImages();
+	o.iconList = o.iconList || createDefaultIconList();
 	o.iconSize = o.iconSize || DEFAULTS.ICON_SIZE;
 	o.buttonImage = o.buttonImage || DEFAULTS.BUTTON_IMAGE;
 	o.buttonSize = o.buttonSize || DEFAULTS.BUTTON_SIZE;
@@ -50,9 +52,15 @@ exports.createMenu = function(o) {
 	var menu = Ti.UI.createView();
 	var menuIcons = [];
 	var menuButton = createMenuButton(o);
-	for (var i = 0; i < o.iconImages.length; i++) {
+	for (var i = 0; i < o.iconList.length; i++) {
 		var menuIcon = createMenuIcon(i, o);
 		menuIcon.addEventListener('click', function(e) {
+			menu.fireEvent(exports.EVENT_ICONCLICK, {
+				source: menu,
+				icon: e.source,
+				index: e.source.index,
+				id: e.source.id
+			});
 			for (var j = 0; j < menuIcons.length; j++) {
 				if (j !== e.source.index) {
 					menuIcons[j].animate(fadeOut);	
@@ -115,7 +123,8 @@ var createMenuButton = function(o) {
 };
 
 var createMenuIcon = function(index, o) {
-	var length = o.iconImages.length;
+	var length = o.iconList.length;
+	var id = o.iconList[index].id;
 	var radians = (90 / (length - 1)) * index * Math.PI / 180;
 	var bounceLeft = Math.sin(radians) * (o.radius + o.bounceDistance);
 	var bounceBottom = Math.cos(radians) * (o.radius + o.bounceDistance);
@@ -152,13 +161,14 @@ var createMenuIcon = function(index, o) {
 	}
 	
 	var icon = Ti.UI.createImageView({
-		image: o.iconImages[index],
+		image: o.iconList[index].image,
 		height: o.iconSize,
 		width: o.iconSize,
 		left: 0,
 		bottom: 0,
 		animations: animations,
-		index: index
+		index: index,
+		id: id
 	});
 	icon.animations.openBounce.icon = icon;
 	icon.animations.closeBounce.icon = icon;
@@ -176,10 +186,13 @@ var doCompleteClose = function(e) {
 	e.source.icon.animate(e.source.icon.animations.closeFinal);
 };
 
-var createDefaultIconImages = function() {
+var createDefaultIconList = function() {
 	var icons = [];
 	for (var i = 0; i < DEFAULTS.ICON_NUMBER; i++) {
-		icons.push(DEFAULTS.ICON_IMAGE);	
+		icons.push({
+			image: DEFAULTS.ICON_IMAGE,
+			id: undefined
+		});	
 	}
 	return icons;	
 };
