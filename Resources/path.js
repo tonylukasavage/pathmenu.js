@@ -62,9 +62,20 @@ exports.createMenu = function(o) {
 				id: e.source.id
 			});
 			for (var j = 0; j < menuIcons.length; j++) {
+				var radians = (90 / (menuIcons.length - 1)) * j * Math.PI / 180;
 				if (j !== e.source.index) {
-					menuIcons[j].animate(fadeOut);	
+					// android scales from the top left, not the center like ios
+					if (isAndroid) {
+						fadeOut.left = Math.sin(radians) * o.radius + (menuIcons[j].width*0.5);
+						fadeOut.bottom = Math.cos(radians) * o.radius - (menuIcons[j].height*0.5);		
+					}	
+					menuIcons[j].animate(fadeOut);
 				} else {
+					// android scales from the top left, not the center like ios
+					if (isAndroid) {
+						fadeLarge.left = Math.sin(radians) * o.radius - (menuIcons[j].width*1.5);
+						fadeLarge.bottom = Math.cos(radians) * o.radius + (menuIcons[j].height*1.5);
+					}
 					menuIcons[j].animate(fadeLarge);
 				}	
 			}
@@ -179,6 +190,11 @@ var createMenuIcon = function(index, o) {
 var doCompleteOpen = function(e) {
 	e.source.removeEventListener('complete', doCompleteOpen);
 	e.source.icon.animate(e.source.icon.animations.openFinal);
+	Ti.API.info('_______________')
+	Ti.API.info(e.source.icon.center.x);
+	Ti.API.info(e.source.icon.center.y);
+	Ti.API.info(e.source.icon.size.x);
+	Ti.API.info(e.source.icon.size.y);
 };
 
 var doCompleteClose = function(e) {
