@@ -25,7 +25,7 @@ var isAndroid = Ti.Platform.osname === 'android';
 /////////////////////////////////////////
 ////////// "Private" variables //////////
 /////////////////////////////////////////
-var settings,
+var settings = {},
 	menu, 
     menuButton,
     menuIcons,
