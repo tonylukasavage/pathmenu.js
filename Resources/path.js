@@ -1,14 +1,14 @@
-// // Path menu for Titanium
-// // Tony Lukasavage
-// //
-// // Notes:
-// // - Transforms must be declared outside the animation to
-// //   work on Android. (http://jira.appcelerator.org/browse/TIMOB-5796)
-// // - Animation 'complete' listeners seem to remove themselves 
-// //   automatically after they execute and need to be re-added on
-// //   every execution
-// 
-// // There MUST be more than 1 icon or the math breaks
+// Path menu for Titanium
+// Tony Lukasavage
+//
+// Notes:
+// - Transforms must be declared outside the animation to
+//   work on Android. (http://jira.appcelerator.org/browse/TIMOB-5796)
+// - Animation 'complete' listeners seem to remove themselves 
+//   automatically after they execute and need to be re-added on
+//   every execution
+
+// There MUST be more than 1 icon or the math breaks
 var DEFAULTS = {
 	ICON_IMAGE: '/images/star.png',
 	ICON_SIZE: 35,
@@ -22,108 +22,140 @@ var DEFAULTS = {
 };
 var isAndroid = Ti.Platform.osname === 'android';
 
-exports.EVENT_ICONCLICK = 'iconClick';
+/////////////////////////////////////////
+////////// "Private" variables //////////
+/////////////////////////////////////////
+var settings,
+	menu, 
+    menuButton,
+    menuIcons,
+    fadeOut,
+    fadeIn;
 
+//////////////////////////////////////
+////////// "Public" members //////////
+//////////////////////////////////////
+exports.EVENT_ICONCLICK = 'iconClick';
 exports.createMenu = function(o) {
 	// Configure the settings for the menu
-	o.iconList = o.iconList || createDefaultIconList();
-	o.iconSize = o.iconSize || DEFAULTS.ICON_SIZE;
-	o.buttonImage = o.buttonImage || DEFAULTS.BUTTON_IMAGE;
-	o.buttonSize = o.buttonSize || DEFAULTS.BUTTON_SIZE;
-	o.menuDuration = o.menuDuration || DEFAULTS.MENU_DURATION;
-	o.fadeDuration = o.fadeDuration || DEFAULTS.FADE_DURATION;
-	o.radius = o.radius || (Ti.Platform.displayCaps.platformWidth/2 - o.iconSize/2);
-	o.bounceDistance = o.bounceDistance || DEFAULTS.BOUNCE_DISTANCE;
-	o.stagger = o.stagger || DEFAULTS.STAGGER;
+	settings.iconList = o.iconList || createDefaultIconList();
+	settings.iconSize = o.iconSize || DEFAULTS.ICON_SIZE;
+	settings.buttonImage = o.buttonImage || DEFAULTS.BUTTON_IMAGE;
+	settings.buttonSize = o.buttonSize || DEFAULTS.BUTTON_SIZE;
+	settings.menuDuration = o.menuDuration || DEFAULTS.MENU_DURATION;
+	settings.fadeDuration = o.fadeDuration || DEFAULTS.FADE_DURATION;
+	settings.radius = o.radius || (Ti.Platform.displayCaps.platformWidth/2 - o.iconSize/2);
+	settings.bounceDistance = o.bounceDistance || DEFAULTS.BOUNCE_DISTANCE;
+	settings.stagger = o.stagger || DEFAULTS.STAGGER;
 	
-	// Create reusable fade & scale animations
-	var fadeOut = Ti.UI.createAnimation({
-		duration: o.fadeDuration,
+	// Create reusable fade & scale animations. Need to declare
+	// the transforms outside of the animation. See notes at the beginning
+	// of this file.
+	fadeOut = Ti.UI.createAnimation({
+		duration: settings.fadeDuration,
 		opacity: 0,
 	});
 	fadeOut.transform = Ti.UI.create2DMatrix().scale(0, 0);
-	var fadeLarge = Ti.UI.createAnimation({
-		duration: o.fadeDuration,
+	fadeLarge = Ti.UI.createAnimation({
+		duration: settings.fadeDuration,
 		opacity: 0
 	});
 	fadeLarge.transform = Ti.UI.create2DMatrix().scale(4, 4);
 	
 	// Construct menu UI components and establish view hierarchy
-	var menu = Ti.UI.createView();
-	var menuIcons = [];
-	var menuButton = createMenuButton(o);
+	menu = Ti.UI.createView();
+	menuButton = createMenuButton();
+	menuIcons = [];
+	
+	menuButton.addEventListener('click', handleMenuButtonClick);
 	for (var i = 0; i < o.iconList.length; i++) {
-		var menuIcon = createMenuIcon(i, o);
-		menuIcon.addEventListener('click', function(e) {
-			menu.fireEvent(exports.EVENT_ICONCLICK, {
-				source: menu,
-				icon: e.source,
-				index: e.source.index,
-				id: e.source.id
-			});
-			for (var j = 0; j < menuIcons.length; j++) {
-				var radians = (90 / (menuIcons.length - 1)) * j * Math.PI / 180;
-				if (j !== e.source.index) {
-					// android scales from the top left, not the center like ios
-					if (isAndroid) {
-						fadeOut.left = Math.sin(radians) * o.radius + (menuIcons[j].width*0.5);
-						fadeOut.bottom = Math.cos(radians) * o.radius - (menuIcons[j].height*0.5);		
-					}	
-					menuIcons[j].animate(fadeOut);
-				} else {
-					// android scales from the top left, not the center like ios
-					if (isAndroid) {
-						fadeLarge.left = Math.sin(radians) * o.radius - (menuIcons[j].width*1.5);
-						fadeLarge.bottom = Math.cos(radians) * o.radius + (menuIcons[j].height*1.5);
-					}
-					menuIcons[j].animate(fadeLarge);
-				}	
-			}
-		});
-		
+		var menuIcon = createMenuIcon(i);
+		menuIcon.addEventListener('click', handleMenuIconClick);
 		menuIcons.push(menuIcon);
 		menu.add(menuIcon);
 	}
 	menu.add(menuButton);
- 	
-	menuButton.addEventListener('click', function(e) {
-		var anim = menuButton.isOpen ? 'close' : 'open';
-		menuButton.isOpen = !menuButton.isOpen;
-		menuButton.animate(menuButton.animations[anim]);
-		
-		for (i = 0; i < menuIcons.length; i++) {
-			var icon = menuIcons[i];
-			icon.animations[anim + 'Bounce'].addEventListener(
-				'complete', 
-				anim === 'open' ? doCompleteOpen : doCompleteClose
-			);
-			icon.animate(icon.animations[anim + 'Bounce']);
-			
-			if (!isAndroid && icon.rotateAnimation) {
-				icon.rotateAnimation();
-			}
-		}
-	});
 	
 	return menu;
 };
 
-var createMenuButton = function(o) {
+/////////////////////////////////////////
+////////// "Private" functions //////////
+/////////////////////////////////////////
+var handleMenuButtonClick = function(e) {
+	var i, icon;
+	var anim = menuButton.isOpen ? 'close' : 'open';
+	
+	// change the menu button state
+	menuButton.isOpen = !menuButton.isOpen;
+	menuButton.animate(menuButton.animations[anim]);
+	
+	// Open/close all the icons with animation
+	for (i = 0; i < menuIcons.length; i++) {
+		icon = menuIcons[i];
+		icon.animations[anim + 'Bounce'].addEventListener(
+			'complete', 
+			anim === 'open' ? doCompleteOpen : doCompleteClose
+		);
+		icon.animate(icon.animations[anim + 'Bounce']);
+		
+		// ios requires the TiViewProxy.h hack for rotational animation
+		if (!isAndroid && icon.rotateAnimation) {
+			icon.rotateAnimation();
+		}
+	}
+};
+
+var handleMenuIconClick = function(e) {
+	var i, radians, icon;
+	
+	menu.fireEvent(exports.EVENT_ICONCLICK, {
+		source: menu,
+		icon: e.source,
+		index: e.source.index,
+		id: e.source.id
+	});
+	
+	// iterate through icons, fade and scale down the ones that weren't clicked,
+	// fade and scale up the one that was.
+	for (i = 0; i < menuIcons.length; i++) {
+		radians = (90 / (menuIcons.length - 1)) * i * Math.PI / 180;
+		icon = menuIcons[i];
+		
+		// android scales from the top left, not the center like ios,
+		// hence the extra left/bottom animations
+		if (i !== e.source.index) {
+			if (isAndroid) {
+				fadeOut.left = Math.sin(radians) * settings.radius + (icon.width * 0.5);
+				fadeOut.bottom = Math.cos(radians) * settings.radius - (icon.height * 0.5);		
+			}	
+			icon.animate(fadeOut);
+		} else {
+			if (isAndroid) {
+				fadeLarge.left = Math.sin(radians) * settings.radius - (icon.width * 1.5);
+				fadeLarge.bottom = Math.cos(radians) * settings.radius + (icon.height * 1.5);
+			}
+			icon.animate(fadeLarge);
+		}	
+	}
+};
+
+var createMenuButton = function() {
 	var animations = {
 		open: Ti.UI.createAnimation({
-			duration: o.menuDuration	
+			duration: settings.menuDuration	
 		}),
 		close: Ti.UI.createAnimation({
-			duration: o.menuDuration
+			duration: settings.menuDuration
 		})
 	};
 	animations.open.transform = Ti.UI.create2DMatrix().rotate(45);
 	animations.close.transform = Ti.UI.create2DMatrix().rotate(0);
 	
 	var menuButton = Ti.UI.createImageView({
-		image: o.buttonImage,
-		height: o.buttonSize,
-		width: o.buttonSize,
+		image: settings.buttonImage,
+		height: settings.buttonSize,
+		width: settings.buttonSize,
 		left: 0,
 		bottom: 0,
 		isOpen: false,
@@ -133,34 +165,34 @@ var createMenuButton = function(o) {
 	return menuButton;
 };
 
-var createMenuIcon = function(index, o) {
-	var length = o.iconList.length;
-	var id = o.iconList[index].id;
+var createMenuIcon = function(index) {
+	var length = settings.iconList.length;
+	var id = settings.iconList[index].id;
 	var radians = (90 / (length - 1)) * index * Math.PI / 180;
-	var bounceLeft = Math.sin(radians) * (o.radius + o.bounceDistance);
-	var bounceBottom = Math.cos(radians) * (o.radius + o.bounceDistance);
-	var finalLeft = Math.sin(radians) * o.radius;
-	var finalBottom = Math.cos(radians) * o.radius;
+	var bounceLeft = Math.sin(radians) * (settings.radius + settings.bounceDistance);
+	var bounceBottom = Math.cos(radians) * (settings.radius + settings.bounceDistance);
+	var finalLeft = Math.sin(radians) * settings.radius;
+	var finalBottom = Math.cos(radians) * settings.radius;
 	var animations = {
 		openBounce: Ti.UI.createAnimation({
-			duration: o.menuDuration,
+			duration: settings.menuDuration,
 			bottom: bounceBottom,
 			left: bounceLeft,
-			delay: index * o.stagger
+			delay: index * settings.stagger
 		}),
 		openFinal: Ti.UI.createAnimation({
-			duration: o.menuDuration / 3.5,
+			duration: settings.menuDuration / 3.5,
 			bottom: finalBottom,
 			left: finalLeft
 		}),
 		closeBounce: Ti.UI.createAnimation({
-			duration: o.menuDuration / 3.5,
+			duration: settings.menuDuration / 3.5,
 			bottom: bounceBottom,
 			left: bounceLeft,
-			delay: (length - (index+1)) * o.stagger,
+			delay: (length - (index+1)) * settings.stagger,
 		}),
 		closeFinal: Ti.UI.createAnimation({
-			duration: o.menuDuration,
+			duration: settings.menuDuration,
 			bottom: 0,
 			left: 0
 		})
@@ -172,9 +204,9 @@ var createMenuIcon = function(index, o) {
 	}
 	
 	var icon = Ti.UI.createImageView({
-		image: o.iconList[index].image,
-		height: o.iconSize,
-		width: o.iconSize,
+		image: settings.iconList[index].image,
+		height: settings.iconSize,
+		width: settings.iconSize,
 		left: 0,
 		bottom: 0,
 		animations: animations,
@@ -190,11 +222,6 @@ var createMenuIcon = function(index, o) {
 var doCompleteOpen = function(e) {
 	e.source.removeEventListener('complete', doCompleteOpen);
 	e.source.icon.animate(e.source.icon.animations.openFinal);
-	Ti.API.info('_______________')
-	Ti.API.info(e.source.icon.center.x);
-	Ti.API.info(e.source.icon.center.y);
-	Ti.API.info(e.source.icon.size.x);
-	Ti.API.info(e.source.icon.size.y);
 };
 
 var doCompleteClose = function(e) {
@@ -211,4 +238,11 @@ var createDefaultIconList = function() {
 		});	
 	}
 	return icons;	
+};
+
+var resetIcon = function(icon) {
+	icon.opacity = 1;
+	icon.transform.scale(1,1);
+	icon.left = 0;
+	icon.bottom = 0;
 };
