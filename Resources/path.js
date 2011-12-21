@@ -53,12 +53,12 @@ exports.createMenu = function(o) {
 	// of this file.
 	fadeOut = Ti.UI.createAnimation({
 		duration: settings.fadeDuration,
-		opacity: 0,
+		opacity: 0.001,
 	});
 	fadeOut.transform = Ti.UI.create2DMatrix().scale(0, 0);
 	fadeLarge = Ti.UI.createAnimation({
 		duration: settings.fadeDuration,
-		opacity: 0
+		opacity: 0.001
 	});
 	fadeLarge.transform = Ti.UI.create2DMatrix().scale(4, 4);
 	
@@ -88,6 +88,9 @@ var handleMenuButtonClick = function(e) {
 	
 	// change the menu button state
 	menuButton.isOpen = !menuButton.isOpen;
+	// if (isAndroid && !menuButton.isOpen) {
+		// menuButton.transform = Ti.UI.create2DMatrix().rotate(45);
+	// } 
 	menuButton.animate(menuButton.animations[anim]);
 	
 	// Open/close all the icons with animation
@@ -137,7 +140,30 @@ var handleMenuIconClick = function(e) {
 			}
 			icon.animate(fadeLarge);
 		}	
+		setTimeoutForReset(icon);
 	}
+	
+	menuButton.animate(menuButton.animations['close']);
+	menuButton.isOpen = false;
+	
+	setTimeout(function() {
+		for (i = 0; i < menuIcons.length; i++) {
+			icon = menuIcons[i];
+			icon.left = 0;
+			icon.bottom = 0;	
+			icon.transform = Ti.UI.create2DMatrix().scale(1,1);
+			setTimeout(function() { icon.opacity = 1; }, 100);
+		}
+	}, settings.fadeDuration);
+};
+
+var setTimeoutForReset = function(icon) {
+	setTimeout(function() {
+		icon.left = 0;
+		icon.bottom = 0;	
+		icon.transform = Ti.UI.create2DMatrix().scale(1,1);
+		setTimeout(function() { icon.opacity = 1; }, 100);
+	}, settings.fadeDuration);
 };
 
 var createMenuButton = function() {
@@ -241,8 +267,8 @@ var createDefaultIconList = function() {
 };
 
 var resetIcon = function(icon) {
-	icon.opacity = 1;
-	icon.transform.scale(1,1);
 	icon.left = 0;
 	icon.bottom = 0;
+	icon.transform.scale(1,1);
+	icon.opacity = 1;
 };

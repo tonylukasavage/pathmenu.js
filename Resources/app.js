@@ -6,10 +6,11 @@ var win = Ti.UI.createWindow({
 var menu = require('/path').createMenu({
 	iconSize: 35,
 	iconList: [
-		{ image: 'images/star.png', id: 'email' },
-		{ image: 'images/star.png', id: 'blog' },
-		{ image: 'images/star.png', id: 'tony' },
-		{ image: 'images/star.png', id: 'joejoe' }
+		{ image: 'images/sm/facebook.png', id: 'facebook' },
+		{ image: 'images/sm/pridat.png', id: 'pridat' },
+		{ image: 'images/sm/twitter.png', id: 'twitter' },
+		{ image: 'images/sm/vimeo.png', id: 'vimeo' },
+		{ image: 'images/sm/youtube.png', id: 'youtube' }
 	]
 });
 menu.addEventListener('iconClick', function(e) {
