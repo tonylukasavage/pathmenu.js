@@ -13,11 +13,22 @@ var menu = require('/path').createMenu({
 		{ image: 'images/sm/youtube.png', id: 'youtube' }
 	]
 });
+var label = Ti.UI.createLabel({
+	text: 'index: ???\nid: ???',
+	color: '#222',
+	font: {
+		fontSize: 24,
+		fontWeight: 'bold'	
+	},
+	textAlign: 'center'
+});
+
 menu.addEventListener('iconClick', function(e) {
 	Ti.API.info(e.source);
 	Ti.API.info(e.icon);
 	Ti.API.info(e.index);
 	Ti.API.info(e.id);
+	label.text = 'index: ' + e.index + '\nid: ' + (e.id ? e.id : 'undefined');
 });
 
 var button = Ti.UI.createButton({
@@ -28,9 +39,11 @@ var button = Ti.UI.createButton({
 });
 button.addEventListener('click', function(e) {
 	menu.initMenu();
+	label.text = 'index: ???\nid: ???';
 });
 
 win.add(menu);
+win.add(label);
 win.add(button);
 
 win.open();
