@@ -51,6 +51,7 @@ exports.createMenu = function(o) {
 	// Create reusable fade & scale animations. Need to declare
 	// the transforms outside of the animation. See notes at the beginning
 	// of this file.
+	// Android acts weird if you try to turn the opacity down to zero
 	fadeOut = Ti.UI.createAnimation({
 		duration: settings.fadeDuration,
 		opacity: 0.001,
@@ -75,6 +76,7 @@ exports.createMenu = function(o) {
 		menu.add(menuIcon);
 	}
 	menu.add(menuButton);
+	menu.initMenu = initMenu;
 	
 	return menu;
 };
@@ -82,15 +84,31 @@ exports.createMenu = function(o) {
 /////////////////////////////////////////
 ////////// "Private" functions //////////
 /////////////////////////////////////////
+var initMenu = function() {
+	menuButton.isOpen = false;
+	menuButton.left = 0;
+	menuButton.bottom = 0;
+	menuButton.opacity = 1;
+	menuButton.transform = Ti.UI.create2DMatrix().rotate(0);
+	menuButton.show();
+	for (var i = 0; i < menuIcons.length; i++) {
+		var icon = menuIcons[i];
+		icon.left = 0;
+		icon.bottom = 0;
+		icon.opacity = 1;
+		icon.transform = Ti.UI.create2DMatrix().scale(1,1);
+		if (isAndroid) {
+			icon.show();
+		}
+	}
+};
+
 var handleMenuButtonClick = function(e) {
 	var i, icon;
 	var anim = menuButton.isOpen ? 'close' : 'open';
 	
 	// change the menu button state
 	menuButton.isOpen = !menuButton.isOpen;
-	// if (isAndroid && !menuButton.isOpen) {
-		// menuButton.transform = Ti.UI.create2DMatrix().rotate(45);
-	// } 
 	menuButton.animate(menuButton.animations[anim]);
 	
 	// Open/close all the icons with animation
@@ -119,6 +137,13 @@ var handleMenuIconClick = function(e) {
 		id: e.source.id
 	});
 	
+	// fade and scale out the menuButton
+	if (isAndroid) {
+		fadeOut.left = (menuButton.width * 0.5);
+		fadeOut.bottom = -1 * (menuButton.height * 0.5);		
+	}	
+	menuButton.animate(fadeOut);
+	
 	// iterate through icons, fade and scale down the ones that weren't clicked,
 	// fade and scale up the one that was.
 	for (i = 0; i < menuIcons.length; i++) {
@@ -140,30 +165,33 @@ var handleMenuIconClick = function(e) {
 			}
 			icon.animate(fadeLarge);
 		}	
-		setTimeoutForReset(icon);
 	}
 	
-	menuButton.animate(menuButton.animations['close']);
-	menuButton.isOpen = false;
-	
-	setTimeout(function() {
-		for (i = 0; i < menuIcons.length; i++) {
-			icon = menuIcons[i];
-			icon.left = 0;
-			icon.bottom = 0;	
-			icon.transform = Ti.UI.create2DMatrix().scale(1,1);
-			setTimeout(function() { icon.opacity = 1; }, 100);
-		}
-	}, settings.fadeDuration);
+	// Move the icons back to their original location after the 
+	// fade duration
+	setTimeoutForHide();
 };
 
-var setTimeoutForReset = function(icon) {
+var setTimeoutForHide = function() {
 	setTimeout(function() {
-		icon.left = 0;
-		icon.bottom = 0;	
-		icon.transform = Ti.UI.create2DMatrix().scale(1,1);
-		setTimeout(function() { icon.opacity = 1; }, 100);
-	}, settings.fadeDuration);
+		
+		if (isAndroid) {
+			menuButton.left = 0;
+			menuButton.bottom = 0;
+			menuButton.hide();
+		}
+		
+		for (var i = 0; i < menuIcons.length; i++) {
+			icon = menuIcons[i];
+			icon.left = 0;
+			icon.bottom = 0;
+			
+			if (isAndroid) {
+				icon.hide();
+			}
+		}
+		
+	}, settings.fadeDuration - 50);
 };
 
 var createMenuButton = function() {

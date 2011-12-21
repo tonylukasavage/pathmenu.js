@@ -20,7 +20,17 @@ menu.addEventListener('iconClick', function(e) {
 	Ti.API.info(e.id);
 });
 
+var button = Ti.UI.createButton({
+	title: 'reset menu',
+	width: 120,
+	height: 40,
+	top: 20
+});
+button.addEventListener('click', function(e) {
+	menu.initMenu();
+});
 
 win.add(menu);
+win.add(button);
 
 win.open();
