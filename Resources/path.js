@@ -15,7 +15,7 @@ var DEFAULTS = {
 	ICON_NUMBER: 6,
 	BUTTON_IMAGE: '/images/add.png',
 	BUTTON_SIZE: 35,
-	MENU_DURATION: 350,
+	MENU_DURATION: 500,
 	FADE_DURATION: 500,
 	BOUNCE_DISTANCE: 25,
 	STAGGER: 25
@@ -26,6 +26,7 @@ var isAndroid = Ti.Platform.osname === 'android';
 ////////// "Private" variables //////////
 /////////////////////////////////////////
 var settings = {},
+	isAnimating = false,
 	menu, 
     menuButton,
     menuIcons,
@@ -101,9 +102,16 @@ var initMenu = function() {
 			icon.show();
 		}
 	}
+	isAnimating = false;
 };
 
 var handleMenuButtonClick = function(e) {
+	// Make sure we don't have other menu animations running
+	if (isAndroid && isAnimating === true) {
+		return;	
+	}
+	isAnimating = true;
+	
 	var i, icon;
 	var anim = menuButton.isOpen ? 'close' : 'open';
 	
@@ -129,6 +137,12 @@ var handleMenuButtonClick = function(e) {
 
 var handleMenuIconClick = function(e) {
 	var i, radians, icon;
+	
+	// Make sure we don't have other menu animations running
+	if (isAndroid && isAnimating === true) {
+		return;	
+	}
+	isAnimating = true;
 	
 	menu.fireEvent(exports.EVENT_ICONCLICK, {
 		source: menu,
@@ -173,8 +187,8 @@ var handleMenuIconClick = function(e) {
 };
 
 var setTimeoutForHide = function() {
+	// use a 50 millisecond buffer to prevent icon "flicker"
 	setTimeout(function() {
-		
 		if (isAndroid) {
 			menuButton.left = 0;
 			menuButton.bottom = 0;
@@ -190,7 +204,6 @@ var setTimeoutForHide = function() {
 				icon.hide();
 			}
 		}
-		
 	}, settings.fadeDuration - 50);
 };
 
@@ -204,7 +217,13 @@ var createMenuButton = function() {
 		})
 	};
 	animations.open.transform = Ti.UI.create2DMatrix().rotate(45);
+	animations.open.addEventListener('complete', function() {
+		isAnimating = false;
+	});
 	animations.close.transform = Ti.UI.create2DMatrix().rotate(0);
+	animations.close.addEventListener('complete', function() {
+		isAnimating = false;
+	});
 	
 	var menuButton = Ti.UI.createImageView({
 		image: settings.buttonImage,

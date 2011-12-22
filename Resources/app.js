@@ -25,7 +25,6 @@ var label = Ti.UI.createLabel({
 
 menu.addEventListener('iconClick', function(e) {
 	Ti.API.info(e.source);
-	Ti.API.info(e.icon);
 	Ti.API.info(e.index);
 	Ti.API.info(e.id);
 	label.text = 'index: ' + e.index + '\nid: ' + (e.id ? e.id : 'undefined');
