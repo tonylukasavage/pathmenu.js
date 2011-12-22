@@ -226,6 +226,7 @@ var createMenuButton = function() {
 	// the first being the starting rotation, the second being the final rotation.
 	// This is not a cross-platform method, so you need to make sure you are on Android
 	// before using 2 arguments.
+	// Jira Issue: http://jira.appcelerator.org/browse/TIMOB-6843
 	if (isAndroid) {
 		animations.close.transform = Ti.UI.create2DMatrix().rotate(45, 0);
 	} else {
