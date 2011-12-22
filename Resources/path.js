@@ -220,7 +220,17 @@ var createMenuButton = function() {
 	animations.open.addEventListener('complete', function() {
 		isAnimating = false;
 	});
-	animations.close.transform = Ti.UI.create2DMatrix().rotate(0);
+	
+	// In Titanium, Android rotations always start at zero, regardless of last position.
+	// In Android Titanium apps you can pass two arguments to the rotate() function,
+	// the first being the starting rotation, the second being the final rotation.
+	// This is not a cross-platform method, so you need to make sure you are on Android
+	// before using 2 arguments.
+	if (isAndroid) {
+		animations.close.transform = Ti.UI.create2DMatrix().rotate(45, 0);
+	} else {
+		animations.close.transform = Ti.UI.create2DMatrix().rotate(0);	
+	}
 	animations.close.addEventListener('complete', function() {
 		isAnimating = false;
 	});
