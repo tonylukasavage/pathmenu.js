@@ -13,6 +13,7 @@ var DEFAULTS = {
 	ICON_IMAGE: '/images/star.png',
 	ICON_SIZE: 35,
 	ICON_NUMBER: 6,
+	ICON_ROTATION: 720,
 	BUTTON_IMAGE: '/images/add.png',
 	BUTTON_SIZE: 35,
 	MENU_DURATION: 500,
@@ -40,6 +41,7 @@ exports.EVENT_ICONCLICK = 'iconClick';
 exports.createMenu = function(o) {
 	// Configure the settings for the menu
 	settings.iconList = o.iconList || createDefaultIconList();
+	settings.iconRotation = o.iconRotation || DEFAULTS.ICON_ROTATION;
 	settings.iconSize = o.iconSize || DEFAULTS.ICON_SIZE;
 	settings.buttonImage = o.buttonImage || DEFAULTS.BUTTON_IMAGE;
 	settings.buttonSize = o.buttonSize || DEFAULTS.BUTTON_SIZE;
@@ -265,8 +267,8 @@ var createMenuIcon = function(index) {
 	};
 	
 	if (isAndroid) {
-		animations.openBounce.transform = Ti.UI.create2DMatrix().rotate(720);
-		animations.closeFinal.transform = Ti.UI.create2DMatrix().rotate(-720);
+		animations.openBounce.transform = Ti.UI.create2DMatrix().rotate(settings.iconRotation);
+		animations.closeFinal.transform = Ti.UI.create2DMatrix().rotate(-1 * settings.iconRotation);
 	}
 	
 	var icon = Ti.UI.createImageView({

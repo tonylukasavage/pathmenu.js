@@ -39,6 +39,7 @@ The pathmenu.js module's `createMenu()` call can take a number of parameters to 
 * **buttonSize** - The height and width in pixels/points of the main menu button. **_(default: 35)_**
 * **fadeDuration** - The amount of time, in milliseconds, that it takes for a menu icon to fade and scale out after you click it. **_(default: 500)_**
 * **iconList** - <a href="#iconList">see details below</a>
+* **iconRotation** - The number of degrees the icons will rotate when the menu is opened/closed
 * **iconSize** - The height and width in pixels/points of the menu icon buttons **_(default: 35)_**
 * **menuDuration** - The duration, in milliseconds, of the animation necessary to position all menu icons when you either open or close the main menu button via click. **NOTE:** An additional `(menuDuration / 3.5)` milliseconds is added to the animation duration to account for the time of the "bounce" effect. **_(default: 500)_**
 * **radius** - The path menu displays menu icons along a 90 degree arc (1st quadrant). The `radius` determines the radius of the arc with respect to the position of the main menu button. **_(default: Ti.Platform.displayCaps.platformWidth/2 - iconSize/2)_**
