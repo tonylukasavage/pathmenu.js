@@ -93,7 +93,7 @@ var resetIconVisibility = function(icon) {
 		if (isAndroid) {
 			icon.show();
 		}
-	}, 50);
+	}, 100);
 };
 
 var initMenu = function() {
