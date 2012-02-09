@@ -55,12 +55,12 @@ exports.createMenu = function(o) {
 	// Android acts weird if you try to turn the opacity down to zero
 	fadeOut = Ti.UI.createAnimation({
 		duration: settings.fadeDuration,
-		opacity: 0.001,
+		opacity: 0
 	});
 	fadeOut.transform = Ti.UI.create2DMatrix().scale(0, 0);
 	fadeLarge = Ti.UI.createAnimation({
 		duration: settings.fadeDuration,
-		opacity: 0.001
+		opacity: 0 
 	});
 	fadeLarge.transform = Ti.UI.create2DMatrix().scale(4, 4);
 	
@@ -85,6 +85,17 @@ exports.createMenu = function(o) {
 /////////////////////////////////////////
 ////////// "Private" functions //////////
 /////////////////////////////////////////
+var resetIconVisibility = function(icon) {
+	// use a short timeout to prevent flicker
+	setTimeout(function() {
+		icon.opacity = 1;
+		icon.transform = Ti.UI.create2DMatrix().scale(1,1);
+		if (isAndroid) {
+			icon.show();
+		}
+	}, 50);
+};
+
 var initMenu = function() {
 	menuButton.isOpen = false;
 	menuButton.left = 0;
@@ -96,11 +107,7 @@ var initMenu = function() {
 		var icon = menuIcons[i];
 		icon.left = 0;
 		icon.bottom = 0;
-		icon.opacity = 1;
-		icon.transform = Ti.UI.create2DMatrix().scale(1,1);
-		if (isAndroid) {
-			icon.show();
-		}
+		resetIconVisibility(icon);
 	}
 	isAnimating = false;
 };
@@ -180,31 +187,6 @@ var handleMenuIconClick = function(e) {
 			icon.animate(fadeLarge);
 		}	
 	}
-	
-	// Move the icons back to their original location after the 
-	// fade duration
-	setTimeoutForHide();
-};
-
-var setTimeoutForHide = function() {
-	// use a 50 millisecond buffer to prevent icon "flicker"
-	setTimeout(function() {
-		if (isAndroid) {
-			menuButton.left = 0;
-			menuButton.bottom = 0;
-			menuButton.hide();
-		}
-		
-		for (var i = 0; i < menuIcons.length; i++) {
-			icon = menuIcons[i];
-			icon.left = 0;
-			icon.bottom = 0;
-			
-			if (isAndroid) {
-				icon.hide();
-			}
-		}
-	}, settings.fadeDuration - 50);
 };
 
 var createMenuButton = function() {
@@ -322,11 +304,4 @@ var createDefaultIconList = function() {
 		});	
 	}
 	return icons;	
-};
-
-var resetIcon = function(icon) {
-	icon.left = 0;
-	icon.bottom = 0;
-	icon.transform.scale(1,1);
-	icon.opacity = 1;
 };
