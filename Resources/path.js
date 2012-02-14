@@ -280,11 +280,12 @@ var createMenuIcon = function(index) {
 		animations.closeFinal.transform = Ti.UI.create2DMatrix().rotate(-1 * settings.iconRotation);
 	}
 	
-	// wrap the iOS image view with the path.animator view, which can be rotated 
-	// more than 180 degrees, by default 720 degrees
+	// Use path.animator view for iOS, which can be rotated more than 180 degrees, 
+	// by default 720 degrees
 	var icon;
 	if (isIOS) {
 		icon = pathAnimator.createView({
+			backgroundImage: settings.iconList[index].image,
 			height: settings.iconSize,
 			width: settings.iconSize,
 			left: 0,
@@ -293,13 +294,6 @@ var createMenuIcon = function(index) {
 			index: index,
 			id: id
 		});
-		var iosImage = Ti.UI.createImageView({
-			image: settings.iconList[index].image,
-			height: settings.iconSize,
-			width: settings.iconSize,
-			touchEnabled: false
-		});
-		icon.add(iosImage);
 	} else {
 		icon = Ti.UI.createImageView({
 			image: settings.iconList[index].image,
