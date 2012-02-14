@@ -274,11 +274,14 @@ var createMenuIcon = function(index) {
 		})
 	};
 	
+	// iOS uses path.animator module for rotations
 	if (!isIOS) {
 		animations.openBounce.transform = Ti.UI.create2DMatrix().rotate(settings.iconRotation);
 		animations.closeFinal.transform = Ti.UI.create2DMatrix().rotate(-1 * settings.iconRotation);
 	}
 	
+	// wrap the iOS image view with the path.animator view, which can be rotated 
+	// more than 180 degrees, by default 720 degrees
 	var icon;
 	if (isIOS) {
 		icon = pathAnimator.createView({
