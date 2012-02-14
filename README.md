@@ -70,3 +70,7 @@ A sample `iconList` might look something like this
 ## iOS Needs a little help with rotations
 
 The included **path.animator module** ([github project found here](https://github.com/tonylukasavage/path.animator)) allows iOS views to have a rotation value greater than 180 degrees. This is a limitation of native iOS transform matrices, not Titanium. A more robust, and platform-specific, animation method is required for these rotations. **path.animator** is an iOS module that resolves that problem. Please check out the [path.animator module project page](https://github.com/tonylukasavage/path.animator) for all the details. 
+
+## Problems?
+
+Log them in the [Issues section](https://github.com/tonylukasavage/pathmenu.js/issues?milestone=2&sort=created&direction=desc&state=open) of this project. The more detailed the issue, the better the chance it has of getting to the top of my todo list. Bonus points for reproducible test cases.
