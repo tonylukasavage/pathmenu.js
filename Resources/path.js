@@ -1,12 +1,9 @@
 // Path menu for Titanium
-// Tony Lukasavage
+// Tony Lukasavage - @tonylukasavage
 //
 // Notes:
 // - Transforms must be declared outside the animation to
 //   work on Android. (http://jira.appcelerator.org/browse/TIMOB-5796)
-// - Animation 'complete' listeners seem to remove themselves 
-//   automatically after they execute and need to be re-added on
-//   every execution
 
 // There MUST be more than 1 icon or the math breaks
 var DEFAULTS = {
@@ -22,6 +19,14 @@ var DEFAULTS = {
 	STAGGER: 25
 };
 var isAndroid = Ti.Platform.osname === 'android';
+var isIOS = Ti.Platform.osname === 'iphone' || Ti.Platform.osname === 'ipad';
+
+/////////////////////////////////////////
+////////// Module dependencies //////////
+/////////////////////////////////////////
+if (isIOS) {
+	var pathAnimator = require('path.animator');
+}
 
 /////////////////////////////////////////
 ////////// "Private" variables //////////
@@ -54,7 +59,6 @@ exports.createMenu = function(o) {
 	// Create reusable fade & scale animations. Need to declare
 	// the transforms outside of the animation. See notes at the beginning
 	// of this file.
-	// Android acts weird if you try to turn the opacity down to zero
 	fadeOut = Ti.UI.createAnimation({
 		duration: settings.fadeDuration,
 		opacity: 0
@@ -137,9 +141,13 @@ var handleMenuButtonClick = function(e) {
 		);
 		icon.animate(icon.animations[anim + 'Bounce']);
 		
-		// ios requires the TiViewProxy.h hack for rotational animation
-		if (!isAndroid && icon.rotateAnimation) {
-			icon.rotateAnimation();
+		// ios uses the path.animator module for iOS rotations so that they can be
+		// greater than 180 degrees
+		if (isIOS) {
+			icon.rotate({
+				angle: settings.iconRotation,
+				duration: settings.menuDuration + (settings.menuDuration / 3.5)	
+			});
 		}
 	}
 };
@@ -266,21 +274,42 @@ var createMenuIcon = function(index) {
 		})
 	};
 	
-	if (isAndroid) {
+	if (!isIOS) {
 		animations.openBounce.transform = Ti.UI.create2DMatrix().rotate(settings.iconRotation);
 		animations.closeFinal.transform = Ti.UI.create2DMatrix().rotate(-1 * settings.iconRotation);
 	}
 	
-	var icon = Ti.UI.createImageView({
-		image: settings.iconList[index].image,
-		height: settings.iconSize,
-		width: settings.iconSize,
-		left: 0,
-		bottom: 0,
-		animations: animations,
-		index: index,
-		id: id
-	});
+	var icon;
+	if (isIOS) {
+		icon = pathAnimator.createView({
+			height: settings.iconSize,
+			width: settings.iconSize,
+			left: 0,
+			bottom: 0,
+			animations: animations,
+			index: index,
+			id: id
+		});
+		var iosImage = Ti.UI.createImageView({
+			image: settings.iconList[index].image,
+			height: settings.iconSize,
+			width: settings.iconSize,
+			touchEnabled: false
+		});
+		icon.add(iosImage);
+	} else {
+		icon = Ti.UI.createImageView({
+			image: settings.iconList[index].image,
+			height: settings.iconSize,
+			width: settings.iconSize,
+			left: 0,
+			bottom: 0,
+			animations: animations,
+			index: index,
+			id: id
+		});
+	}
+	
 	icon.animations.openBounce.icon = icon;
 	icon.animations.closeBounce.icon = icon;
 	

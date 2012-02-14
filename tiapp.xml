@@ -40,5 +40,7 @@
             <supports-screens android:anyDensity="false"/>
         </manifest>
     </android>
-    <modules/>
+    <modules>
+    	<module platform="iphone" version="1.0">path.animator</module>
+    </modules>
 </ti:app>
