@@ -1,0 +1,18 @@
+#
+# this is your module manifest and used by Titanium
+# during compilation, packaging, distribution, etc.
+#
+version: 1.0
+apiversion: 2
+description: Appcelerator Titanium iOS module for adding rotations greater then 180 degrees via CABasicAnimations.
+author: Tony Lukasavage
+license: Do whatever you want with this
+copyright: Tony Lukasavage © 2012
+
+
+# these should not be edited
+name: pathanimator
+moduleid: path.animator
+guid: 29e7f779-2d45-4b17-b1c7-02cd9b445af8
+platform: iphone
+minsdk: 1.8.1
