@@ -4,7 +4,6 @@ var win = Ti.UI.createWindow({
 	exitOnClose: true
 });
 var menu = require('/path').createMenu({
-	iconSize: 35,
 	iconList: [
 		{ image: 'images/sm/facebook.png', id: 'facebook' },
 		{ image: 'images/sm/pridat.png', id: 'pridat' },

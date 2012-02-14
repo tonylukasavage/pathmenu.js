@@ -8,11 +8,11 @@
 // There MUST be more than 1 icon or the math breaks
 var DEFAULTS = {
 	ICON_IMAGE: '/images/star.png',
-	ICON_SIZE: 35,
+	ICON_SIZE: Ti.Platform.displayCaps.platformWidth > 600 ? 80 : 40,
 	ICON_NUMBER: 6,
 	ICON_ROTATION: 720,
 	BUTTON_IMAGE: '/images/add.png',
-	BUTTON_SIZE: 35,
+	BUTTON_SIZE: Ti.Platform.displayCaps.platformWidth > 600 ? 80 : 40,
 	MENU_DURATION: 500,
 	FADE_DURATION: 500,
 	BOUNCE_DISTANCE: 25,
@@ -52,7 +52,7 @@ exports.createMenu = function(o) {
 	settings.buttonSize = o.buttonSize || DEFAULTS.BUTTON_SIZE;
 	settings.menuDuration = o.menuDuration || DEFAULTS.MENU_DURATION;
 	settings.fadeDuration = o.fadeDuration || DEFAULTS.FADE_DURATION;
-	settings.radius = o.radius || (Ti.Platform.displayCaps.platformWidth/2 - o.iconSize/2);
+	settings.radius = o.radius || (Ti.Platform.displayCaps.platformWidth/2 - settings.iconSize/2);
 	settings.bounceDistance = o.bounceDistance || DEFAULTS.BOUNCE_DISTANCE;
 	settings.stagger = o.stagger || DEFAULTS.STAGGER;
 	
