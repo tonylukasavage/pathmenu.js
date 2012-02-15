@@ -16,7 +16,7 @@ var DEFAULTS = {
 	MENU_DURATION: 500,
 	FADE_DURATION: 500,
 	BOUNCE_DISTANCE: 25,
-	STAGGER: 25
+	STAGGER: 50
 };
 var isAndroid = Ti.Platform.osname === 'android';
 var isIOS = Ti.Platform.osname === 'iphone' || Ti.Platform.osname === 'ipad';
