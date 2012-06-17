@@ -40,8 +40,8 @@ button.addEventListener('click', function(e) {
 	label.text = 'index: ???\nid: ???';
 });
 
-win.add(menu);
 win.add(label);
 win.add(button);
+win.add(menu);
 
 win.open();

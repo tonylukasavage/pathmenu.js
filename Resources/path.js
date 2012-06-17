@@ -1,9 +1,5 @@
 // Path menu for Titanium
 // Tony Lukasavage - @tonylukasavage
-//
-// Notes:
-// - Transforms must be declared outside the animation to
-//   work on Android. (http://jira.appcelerator.org/browse/TIMOB-5796)
 
 // There MUST be more than 1 icon or the math breaks
 var DEFAULTS = {
@@ -71,7 +67,12 @@ exports.createMenu = function(o) {
 	fadeLarge.transform = Ti.UI.create2DMatrix().scale(4, 4);
 	
 	// Construct menu UI components and establish view hierarchy
-	menu = Ti.UI.createView();
+	menu = Ti.UI.createView({
+		height: settings.buttonSize,
+		width: settings.buttonSize,
+		bottom: 0,
+		left: 0
+	});
 	menuButton = createMenuButton();
 	menuIcons = [];
 	
@@ -132,6 +133,20 @@ var handleMenuButtonClick = function(e) {
 	menuButton.isOpen = !menuButton.isOpen;
 	menuButton.animate(menuButton.animations[anim]);
 	
+	// quick and dirty fix for making the containing view "fit"
+	if (anim === 'open') {
+		menu.height = settings.radius + settings.bounceDistance + settings.iconSize;
+		menu.width = settings.radius + settings.bounceDistance + settings.iconSize;
+	} else {
+		setTimeout(
+			function() {
+				menu.height = settings.buttonSize;
+				menu.width = settings.buttonSize;
+			}, 
+			settings.menuDuration + (settings.stagger * settings.iconList.length) + 100
+		);	
+	}
+	
 	// Open/close all the icons with animation
 	for (i = 0; i < menuIcons.length; i++) {
 		icon = menuIcons[i];
@@ -173,6 +188,10 @@ var handleMenuIconClick = function(e) {
 		fadeOut.left = (menuButton.width * 0.5);
 		fadeOut.bottom = -1 * (menuButton.height * 0.5);		
 	}	
+	fadeOut.addEventListener('complete', function(e) {
+		menu.height = settings.buttonSize;
+		menu.width = settings.buttonSize;
+	});
 	menuButton.animate(fadeOut);
 	
 	// iterate through icons, fade and scale down the ones that weren't clicked,

@@ -7,7 +7,7 @@
         <target device="android">true</target>
         <target device="blackberry">false</target>
     </deployment-targets>
-    <sdk-version>1.8.1</sdk-version>
+    <sdk-version>2.0.2.GA</sdk-version>
     <id>path.menu</id>
     <name>pathmenu</name>
     <version>1.0</version>
@@ -41,6 +41,6 @@
         </manifest>
     </android>
     <modules>
-    	<module platform="iphone" version="1.0">path.animator</module>
+        <module platform="iphone" version="1.0">path.animator</module>
     </modules>
 </ti:app>
