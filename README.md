@@ -1,3 +1,5 @@
+> **NO LONGER MAINTAINED**
+
 # pathmenu.js by [@tonylukasavage](http://twitter.com/#!/tonylukasavage)
 
 Add the super-hyped Path menu interface to your Appcelerator Titanium apps. Check out [path.com](http://path.com) for the inspiration.
